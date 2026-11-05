@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/34432741/README.md)
 # SlideStudio
 
 A free, offline PowerPoint-style slide editor for macOS (Apple Silicon and Intel).
