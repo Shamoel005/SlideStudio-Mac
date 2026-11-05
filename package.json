@@ -1,7 +1,7 @@
 {
   "name": "slidestudio",
   "productName": "SlideStudio",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A free, offline PowerPoint-style slide editor for macOS",
   "main": "main.js",
   "author": "SlideStudio",
@@ -9,6 +9,10 @@
   "scripts": {
     "start": "electron .",
     "build": "electron-builder --mac --publish never"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "pptxgenjs": "^3.12.0"
   },
   "devDependencies": {
     "electron": "^33.0.0",
