@@ -2,6 +2,8 @@ name: Build macOS app
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -17,13 +19,21 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build .dmg (Apple Silicon + Intel)
-        run: npx electron-builder --mac --publish never
+      - name: Disable Spotlight indexing (prevents hdiutil busy error)
+        run: sudo mdutil -a -i off || true
+
+      - name: Build .dmg (Apple Silicon)
+        run: npx electron-builder --mac dmg --arm64 --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Build .dmg (Intel)
+        run: npx electron-builder --mac dmg --x64 --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
 
