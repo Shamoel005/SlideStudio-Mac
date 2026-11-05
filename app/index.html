@@ -3,57 +3,61 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SlideStudio</title>
+<title>SlideStudio Pro</title>
+<script src="../node_modules/jszip/dist/jszip.min.js"></script>
+<script src="../node_modules/pptxgenjs/dist/pptxgen.bundle.js"></script>
 <style>
-:root{--bg:#e9ebef;--panel:#fff;--line:#d9dce1;--ink:#1c1f24;--mut:#6b7280;--acc:#2563eb}
+:root{--bg:#e9ebef;--panel:#fff;--line:#d9dce1;--ink:#1c1f24;--mut:#6b7280;--acc:#d9381e;--acc-h:#b82d16}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{font:13px -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:var(--ink);background:var(--bg);overflow:hidden}
-#app{display:grid;grid-template-columns:214px 1fr;grid-template-rows:auto auto 1fr 74px;height:100vh}
-header,#fmt{grid-column:1/3;background:var(--panel);border-bottom:1px solid var(--line);display:flex;gap:6px;align-items:center;padding:7px 12px;flex-wrap:wrap}
+body{font:12.5px -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:var(--ink);background:var(--bg);overflow:hidden}
+#app{display:grid;grid-template-columns:220px 1fr;grid-template-rows:auto auto 1fr 78px;height:100vh}
+header,#fmt{grid-column:1/3;background:var(--panel);border-bottom:1px solid var(--line);display:flex;gap:5px;align-items:center;padding:6px 12px;flex-wrap:wrap}
 button,select,input{font:inherit}
-button,select{border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 9px;cursor:pointer;color:var(--ink)}
+button,select{border:1px solid var(--line);background:#fff;border-radius:5px;padding:4px 8px;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:4px}
 button:hover,select:hover{background:#f3f4f6}
-button.pri{background:var(--acc);border-color:var(--acc);color:#fff}
-button.pri:hover{background:#1d4ed8}
-button.tg{min-width:30px;padding:5px 7px}
-input[type=number]{width:58px;border:1px solid var(--line);border-radius:6px;padding:5px 6px}
-input[type=color]{width:30px;height:28px;padding:1px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer}
-#title{border:1px solid transparent;border-radius:6px;padding:5px 8px;font-weight:600;font-size:14px;width:230px;background:transparent}
+button.pri{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:500}
+button.pri:hover{background:var(--acc-h)}
+button.tg{min-width:28px;justify-content:center;padding:4px 6px}
+input[type=number]{width:54px;border:1px solid var(--line);border-radius:5px;padding:4px 5px}
+input[type=color]{width:26px;height:24px;padding:1px;border:1px solid var(--line);border-radius:4px;background:#fff;cursor:pointer}
+#title{border:1px solid transparent;border-radius:5px;padding:4px 8px;font-weight:600;font-size:14px;width:200px;background:transparent}
 #title:hover,#title:focus{border-color:var(--line);background:#fff;outline:none}
-.sep{width:1px;height:22px;background:var(--line);margin:0 4px}
-label.c{display:flex;align-items:center;gap:4px;color:var(--mut);font-size:12px}
+.sep{width:1px;height:20px;background:var(--line);margin:0 3px}
+label.c{display:flex;align-items:center;gap:4px;color:var(--mut);font-size:11.5px}
 #side{grid-row:3/5;background:#f6f7f9;border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
 #sbtn{display:flex;gap:4px;padding:8px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 #sbtn select{flex:1;min-width:0}
 #thumbs{overflow:auto;padding:10px 8px;flex:1}
 .thumb{display:flex;gap:6px;margin-bottom:10px;cursor:pointer;align-items:flex-start}
-.thumb .num{width:16px;text-align:right;color:var(--mut);font-size:11px;padding-top:2px}
-.tbox{width:168px;height:94.5px;overflow:hidden;position:relative;border:2px solid transparent;border-radius:4px;box-shadow:0 0 0 1px var(--line);background:#fff;flex:none}
+.thumb .num{width:18px;text-align:right;color:var(--mut);font-size:11px;padding-top:2px;font-weight:600}
+.tbox{width:168px;height:94.5px;overflow:hidden;position:relative;border:2px solid transparent;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.12);background:#fff;flex:none}
 .thumb.on .tbox{border-color:var(--acc)}
 .tslide{position:absolute;left:0;top:0;width:960px;height:540px;transform:scale(.175);transform-origin:0 0;overflow:hidden}
-#stage{display:grid;place-items:center;overflow:hidden;min-height:0}
-#wrap{position:relative;box-shadow:0 6px 28px rgba(0,0,0,.22)}
+#stage{display:grid;place-items:center;overflow:hidden;min-height:0;position:relative}
+#wrap{position:relative;box-shadow:0 8px 30px rgba(0,0,0,.22)}
 #slide{position:absolute;left:0;top:0;width:960px;height:540px;transform-origin:0 0;overflow:hidden;background:#fff;--k:1}
-#notes{grid-column:2;background:var(--panel);border-top:1px solid var(--line);padding:6px 12px}
-#notes textarea{width:100%;height:100%;border:none;resize:none;outline:none;font:inherit;background:transparent}
-.el{position:absolute;display:flex;user-select:none;cursor:move}
+#notes{grid-column:2;background:var(--panel);border-top:1px solid var(--line);padding:6px 12px;display:flex;flex-direction:column}
+#notes textarea{width:100%;flex:1;border:none;resize:none;outline:none;font:inherit;background:transparent}
+.el{position:absolute;display:flex;user-select:none;cursor:move;transform-origin:center center}
 .el.text{align-items:flex-start}
 .el.shape{align-items:center;justify-content:center}
 .el.image img{width:100%;height:100%;object-fit:fill;pointer-events:none;-webkit-user-drag:none}
-.txt{width:100%;min-height:1em;line-height:1.2;padding:4px 6px;white-space:pre-wrap;word-break:break-word;outline:none}
+.txt{width:100%;min-height:1em;line-height:1.25;padding:6px 8px;white-space:pre-wrap;word-break:break-word;outline:none}
 .el.shape .txt{text-align:center}
 .txt[contenteditable=true]{cursor:text;user-select:text;-webkit-user-select:text}
+.el table{width:100%;height:100%;border-collapse:collapse;table-layout:fixed}
+.el td{border:1px solid #9ca3af;padding:6px;outline:none;vertical-align:top;word-break:break-word}
 #slide .el.sel{outline:calc(2px/var(--k)) solid var(--acc)}
-.h{position:absolute;width:calc(12px/var(--k));height:calc(12px/var(--k));background:#fff;border:calc(2px/var(--k)) solid var(--acc);border-radius:50%}
+.h{position:absolute;width:calc(11px/var(--k));height:calc(11px/var(--k));background:#fff;border:calc(2px/var(--k)) solid var(--acc);border-radius:50%;z-index:2}
 .h.nw{left:calc(-6px/var(--k));top:calc(-6px/var(--k));cursor:nwse-resize}
 .h.ne{right:calc(-6px/var(--k));top:calc(-6px/var(--k));cursor:nesw-resize}
 .h.sw{left:calc(-6px/var(--k));bottom:calc(-6px/var(--k));cursor:nesw-resize}
 .h.se{right:calc(-6px/var(--k));bottom:calc(-6px/var(--k));cursor:nwse-resize}
 #present{display:none;position:fixed;inset:0;background:#000;z-index:99;align-items:center;justify-content:center;cursor:none}
 #pwrap{position:relative;overflow:hidden}
-#pslide{position:absolute;left:0;top:0;width:960px;height:540px;transform-origin:0 0;overflow:hidden}
-#pcount{position:fixed;right:14px;bottom:10px;color:#fff;opacity:.35;font-size:12px}
+#pslide{position:absolute;left:0;top:0;width:960px;height:540px;transform-origin:0 0;overflow:hidden;transition:opacity .35s ease,transform .35s ease}
+#pcount{position:fixed;right:16px;bottom:12px;color:#fff;opacity:.4;font-size:13px}
 #printArea{display:none}
 @media print{
   html,body{height:auto;overflow:visible;background:#fff}
@@ -67,78 +71,99 @@ label.c{display:flex;align-items:center;gap:4px;color:var(--mut);font-size:12px}
 <body>
 <div id="app">
   <header>
-    <input id="title" value="Untitled presentation" title="Presentation name">
+    <input id="title" value="Untitled Presentation" title="Presentation name">
     <div class="sep"></div>
-    <button id="aText">T Text</button>
-    <button id="aRect">▭ Box</button>
-    <button id="aRound">▢ Rounded</button>
-    <button id="aOval">◯ Oval</button>
-    <button id="aLine">─ Line</button>
-    <button id="aImg">🖼 Image</button>
+    <button id="aText" title="Text Box">T Text</button>
+    <button id="aRect" title="Rectangle">▭ Box</button>
+    <button id="aRound" title="Rounded Rectangle">▢ Round</button>
+    <button id="aOval" title="Oval / Circle">◯ Oval</button>
+    <button id="aTri" title="Triangle">△ Tri</button>
+    <button id="aArr" title="Right Arrow">⇨ Arrow</button>
+    <button id="aLine" title="Line">─ Line</button>
+    <button id="aTable" title="Insert 3x3 Table">⊞ Table</button>
+    <button id="aImg" title="Insert Image (PNG, JPG, SVG)">🖼 Image</button>
     <div class="sep"></div>
     <button id="undo" title="Undo (⌘Z)">↶</button>
     <button id="redo" title="Redo (⇧⌘Z)">↷</button>
     <div style="flex:1"></div>
-    <button id="open">Open</button>
-    <button id="saveF">Save</button>
-    <button id="pdf">Export PDF</button>
+    <button id="open" title="Open .pptx, .ppsx, or .slides.json">📂 Open (.pptx / .json)</button>
+    <button id="savePptx" class="pri" title="Export as Microsoft PowerPoint (.pptx)">💾 Save .pptx</button>
+    <button id="saveF" title="Save native project file (.slides.json)">Save .json</button>
+    <button id="pdf">PDF</button>
     <button id="help">?</button>
     <button id="play" class="pri">▶ Present</button>
-    <input type="file" id="imgin" accept="image/*" hidden>
-    <input type="file" id="filein" accept=".json,application/json" hidden>
+    <input type="file" id="imgin" accept="image/*" multiple hidden>
+    <input type="file" id="filein" accept=".pptx,.ppsx,.json,application/json,application/vnd.openxmlformats-officedocument.presentationml.presentation" hidden>
   </header>
 
   <div id="fmt">
     <select id="font">
-      <option>Helvetica Neue</option><option>Arial</option><option>Avenir Next</option><option>Futura</option>
-      <option>Georgia</option><option>Palatino</option><option>Times New Roman</option>
+      <option>Helvetica Neue</option><option>Arial</option><option>Calibri</option><option>Avenir Next</option>
+      <option>Futura</option><option>Georgia</option><option>Palatino</option><option>Times New Roman</option>
       <option>Trebuchet MS</option><option>Verdana</option><option>Courier New</option><option>Menlo</option>
     </select>
     <input type="number" id="fs" min="6" max="300" value="28" title="Font size">
-    <button class="tg" id="bB"><b>B</b></button>
-    <button class="tg" id="bI"><i>I</i></button>
-    <button class="tg" id="bU"><u>U</u></button>
+    <button class="tg" id="bB" title="Bold"><b>B</b></button>
+    <button class="tg" id="bI" title="Italic"><i>I</i></button>
+    <button class="tg" id="bU" title="Underline"><u>U</u></button>
+    <button class="tg" id="bS" title="Strikethrough"><s>S</s></button>
     <button class="tg" id="aL" title="Align left">⇤</button>
     <button class="tg" id="aC" title="Align center">↔</button>
     <button class="tg" id="aR" title="Align right">⇥</button>
     <div class="sep"></div>
     <label class="c">Text <input type="color" id="tc"></label>
     <label class="c">Fill <input type="color" id="fc"></label>
-    <button id="nofill" title="Remove fill">No fill</button>
+    <button id="nofill" title="Transparent fill">No fill</button>
+    <label class="c">Border <input type="color" id="sc"></label>
+    <input type="number" id="sw" min="0" max="25" value="0" title="Border thickness (px)" style="width:44px">
     <div class="sep"></div>
-    <button id="front">To front</button>
-    <button id="back">To back</button>
-    <button id="dup">Duplicate</button>
-    <button id="del">Delete</button>
+    <label class="c">Rot° <input type="number" id="rot" min="-360" max="360" value="0" style="width:50px"></label>
+    <label class="c">Alpha <input type="number" id="op" min="10" max="100" step="10" value="100" style="width:52px"></label>
     <div class="sep"></div>
-    <label class="c">Background <input type="color" id="bgc"></label>
+    <button id="front" title="Bring to Front">↑ Front</button>
+    <button id="back" title="Send to Back">↓ Back</button>
+    <button id="dup" title="Duplicate (⌘D)">Copy</button>
+    <button id="del" title="Delete">Del</button>
+    <div class="sep"></div>
+    <label class="c">Slide BG <input type="color" id="bgc"></label>
+    <select id="trans" title="Slide Transition">
+      <option value="none">Transition: None</option>
+      <option value="fade">Transition: Fade</option>
+      <option value="slide">Transition: Push</option>
+      <option value="zoom">Transition: Zoom</option>
+    </select>
     <select id="theme">
       <option value="">Theme…</option>
       <option value="white">Clean White</option><option value="midnight">Midnight</option>
       <option value="ocean">Ocean</option><option value="sunset">Sunset</option>
-      <option value="forest">Forest</option><option value="paper">Paper</option>
+      <option value="forest">Forest</option><option value="paper">Warm Paper</option>
     </select>
   </div>
 
   <aside id="side">
     <div id="sbtn">
-      <select id="layout"><option value="content">Title + content</option><option value="title">Title slide</option><option value="blank">Blank</option></select>
+      <select id="layout">
+        <option value="content">Title + Content</option>
+        <option value="two">Two Columns</option>
+        <option value="title">Title Slide</option>
+        <option value="blank">Blank</option>
+      </select>
       <button id="newS" class="pri">+ Slide</button>
-      <button id="dupS">Copy</button>
-      <button id="delS">Delete</button>
+      <button id="dupS">Dup</button>
+      <button id="delS">✕</button>
     </div>
     <div id="thumbs"></div>
   </aside>
 
   <main id="stage"><div id="wrap"><div id="slide"></div></div></main>
-  <div id="notes"><textarea id="notesTa" placeholder="Speaker notes for this slide…"></textarea></div>
+  <div id="notes"><textarea id="notesTa" placeholder="Click to add speaker notes…"></textarea></div>
 </div>
 
 <div id="present"><div id="pwrap"><div id="pslide"></div></div><div id="pcount"></div></div>
 <div id="printArea"></div>
 
 <script>
-const W=960,H=540,KEY='slidestudio_v1';
+const W=960,H=540,KEY='slidestudio_pro_v2';
 const $=s=>document.querySelector(s);
 const uid=()=>Math.random().toString(36).slice(2,9);
 const THEMES={
@@ -152,21 +177,25 @@ const THEMES={
 let S,cur=0,sel=null,editingId=null,k=1,hist=[],hi=-1,clip=null,present=false,pi=0;
 
 function tb(x,y,w,h,text,o={}){
-  return Object.assign({id:uid(),type:'text',x,y,w,h,text,fs:28,color:'#1f2937',font:'Helvetica Neue',bold:false,italic:false,u:false,align:'left',fill:'transparent'},o);
+  return Object.assign({id:uid(),type:'text',x,y,w,h,text,fs:26,color:'#1f2937',font:'Helvetica Neue',bold:false,italic:false,u:false,s:false,align:'left',fill:'transparent',stroke:'#000000',sw:0,rot:0,op:100},o);
 }
 function mkSlide(layout,bg='#ffffff',color='#1f2937'){
   const els=[];
   if(layout==='title'){
-    els.push(tb(80,170,800,110,'Presentation title',{fs:56,bold:true,align:'center',color}),
-             tb(80,290,800,60,'Subtitle',{fs:26,align:'center',color}));
+    els.push(tb(80,170,800,110,'Presentation Title',{fs:54,bold:true,align:'center',color}),
+             tb(80,290,800,60,'Click to add subtitle',{fs:26,align:'center',color}));
   }else if(layout==='content'){
-    els.push(tb(60,40,840,80,'Slide title',{fs:42,bold:true,color}),
-             tb(60,140,840,360,'• First point\n• Second point\n• Third point',{fs:28,color}));
+    els.push(tb(60,40,840,75,'Slide Title',{fs:40,bold:true,color}),
+             tb(60,135,840,350,'• First bullet point\n• Second bullet point\n• Third bullet point',{fs:26,color}));
+  }else if(layout==='two'){
+    els.push(tb(60,40,840,75,'Comparison Title',{fs:40,bold:true,color}),
+             tb(60,135,400,350,'• Left column point 1\n• Left column point 2',{fs:24,color}),
+             tb(500,135,400,350,'• Right column point 1\n• Right column point 2',{fs:24,color}));
   }
-  return {bg,els,notes:''};
+  return {bg,els,notes:'',trans:'none'};
 }
 function loadState(){try{const j=localStorage.getItem(KEY);if(j){const o=JSON.parse(j);if(o&&Array.isArray(o.slides)&&o.slides.length)return o}}catch(e){}return null}
-S=loadState()||{title:'Untitled presentation',slides:[mkSlide('title'),mkSlide('content')]};
+S=loadState()||{title:'Untitled Presentation',slides:[mkSlide('title'),mkSlide('content')]};
 
 const slide=()=>S.slides[cur];
 const selEl=()=>slide().els.find(e=>e.id===sel);
@@ -178,7 +207,7 @@ function save(){
   const j=JSON.stringify(S);
   if(j===hist[hi])return;
   hist=hist.slice(0,hi+1);hist.push(j);
-  if(hist.length>80){hist.shift()}
+  if(hist.length>80)hist.shift();
   hi=hist.length-1;persist();
 }
 function restore(j){S=JSON.parse(j);cur=Math.min(cur,S.slides.length-1);sel=null;editingId=null;persist();renderAll()}
@@ -192,17 +221,48 @@ function node(e,edit){
   d.dataset.id=e.id;
   const st=d.style;
   st.left=e.x+'px';st.top=e.y+'px';st.width=e.w+'px';st.height=e.h+'px';
+  if(e.rot)st.transform=`rotate(${e.rot}deg)`;
+  if(e.op!=null&&e.op<100)st.opacity=e.op/100;
+  if(e.sw>0&&e.shape!=='triangle'&&e.shape!=='arrow'){
+    st.border=`${e.sw}px solid ${e.stroke||'#000'}`;
+  }
   if(e.type==='image'){
     const i=new Image();i.src=e.src;d.appendChild(i);
+  }else if(e.type==='table'){
+    const tbl=document.createElement('table');
+    tbl.style.fontFamily=`"${e.font||'Helvetica Neue'}",sans-serif`;
+    tbl.style.fontSize=(e.fs||20)+'px';
+    tbl.style.color=e.color||'#1f2937';
+    tbl.style.background=e.fill&&e.fill!=='transparent'?e.fill:'#ffffff';
+    (e.rows||[]).forEach((row,ri)=>{
+      const tr=document.createElement('tr');
+      row.forEach((cell,ci)=>{
+        const td=document.createElement('td');
+        if(ri===0)td.style.fontWeight='700';
+        td.textContent=cell;
+        if(edit){
+          td.contentEditable='true';
+          td.oninput=()=>{e.rows[ri][ci]=td.innerText};
+          td.onblur=()=>{save();renderThumbs()};
+        }
+        tr.appendChild(td);
+      });
+      tbl.appendChild(tr);
+    });
+    d.appendChild(tbl);
   }else{
     st.background=e.fill||'transparent';
     if(e.shape==='ellipse')st.borderRadius='50%';
-    else if(e.shape==='round')st.borderRadius='24px';
+    else if(e.shape==='round')st.borderRadius='20px';
+    else if(e.shape==='triangle')st.clipPath='polygon(50% 0%, 0% 100%, 100% 100%)';
+    else if(e.shape==='arrow')st.clipPath='polygon(0% 25%, 65% 25%, 65% 0%, 100% 50%, 65% 100%, 65% 75%, 0% 75%)';
+
     if(e.shape!=='line'){
       const t=document.createElement('div');t.className='txt';t.textContent=e.text||'';
+      const dec=[e.u?'underline':'',e.s?'line-through':''].filter(Boolean).join(' ')||'none';
       t.style.cssText='font-size:'+e.fs+'px;font-family:"'+e.font+'",sans-serif;color:'+e.color+
         ';font-weight:'+(e.bold?700:400)+';font-style:'+(e.italic?'italic':'normal')+
-        ';text-decoration:'+(e.u?'underline':'none')+';text-align:'+e.align;
+        ';text-decoration:'+dec+';text-align:'+(e.align||'left');
       d.appendChild(t);
     }
   }
@@ -212,7 +272,7 @@ function node(e,edit){
   return d;
 }
 function renderSlideInto(c,s,edit){
-  c.style.background=s.bg;c.innerHTML='';
+  c.style.background=s.bg||'#ffffff';c.innerHTML='';
   s.els.forEach(e=>c.appendChild(node(e,edit)));
 }
 function fit(){
@@ -221,14 +281,17 @@ function fit(){
   const w=$('#wrap');w.style.width=W*k+'px';w.style.height=H*k+'px';
   const s=$('#slide');s.style.transform='scale('+k+')';s.style.setProperty('--k',k);
 }
-function setv(id,v){const el=$(id);if(document.activeElement!==el)el.value=v}
+function setv(id,v){const el=$(id);if(el&&document.activeElement!==el)el.value=v}
 function sync(){
   const e=selEl();
   if(e){
-    setv('#font',e.font||'Helvetica Neue');setv('#fs',e.fs||28);
+    setv('#font',e.font||'Helvetica Neue');setv('#fs',e.fs||26);
     setv('#tc',hex(e.color));setv('#fc',hex(e.fill));
+    setv('#sc',hex(e.stroke||'#000000'));setv('#sw',e.sw||0);
+    setv('#rot',e.rot||0);setv('#op',e.op!=null?e.op:100);
   }
   setv('#bgc',hex(slide().bg));
+  setv('#trans',slide().trans||'none');
 }
 function renderStage(){fit();renderSlideInto($('#slide'),slide(),true);sync()}
 function renderThumbs(){
@@ -266,11 +329,11 @@ function finishEdit(){
   if(n&&e){e.text=n.innerText.replace(/\n$/,'');n.contentEditable='false'}
   save();renderThumbs();
 }
-$('#slide').addEventListener('focusout',()=>finishEdit());
+$('#slide').addEventListener('focusout',ev=>{if(!ev.target.closest('td'))finishEdit()});
 $('#slide').addEventListener('dblclick',ev=>{
   const n=ev.target.closest('.el');if(!n)return;
   const e=slide().els.find(x=>x.id===n.dataset.id);
-  if(!e||e.type==='image'||e.shape==='line')return;
+  if(!e||e.type==='image'||e.type==='table'||e.shape==='line')return;
   const t=n.querySelector('.txt');editingId=e.id;t.contentEditable='true';t.focus();
   const r=document.createRange();r.selectNodeContents(t);
   const s=getSelection();s.removeAllRanges();s.addRange(r);
@@ -278,6 +341,7 @@ $('#slide').addEventListener('dblclick',ev=>{
 
 /* ---------- drag & resize ---------- */
 $('#slide').addEventListener('mousedown',ev=>{
+  if(ev.target.closest('td'))return;
   const hnd=ev.target.closest('.h');
   const n=ev.target.closest('.el');
   if(editingId&&n&&n.dataset.id===editingId&&ev.target.closest('.txt'))return;
@@ -296,10 +360,10 @@ $('#slide').addEventListener('mousedown',ev=>{
       let w=o.w,h=o.h,x=o.x,y=o.y;
       if(p.includes('e'))w=Math.max(20,o.w+dx);
       if(p.includes('w'))w=Math.max(20,o.w-dx);
-      if(e.type==='image')h=w*o.h/o.w;
+      if(e.type==='image'&&m.shiftKey)h=w*o.h/o.w;
       else{
-        if(p.includes('s'))h=Math.max(10,o.h+dy);
-        if(p.includes('n'))h=Math.max(10,o.h-dy);
+        if(p.includes('s'))h=Math.max(8,o.h+dy);
+        if(p.includes('n'))h=Math.max(8,o.h-dy);
       }
       if(p.includes('w'))x=o.x+o.w-w;
       if(p.includes('n'))y=o.y+o.h-h;
@@ -315,33 +379,43 @@ $('#slide').addEventListener('mousedown',ev=>{
   addEventListener('mousemove',mv);addEventListener('mouseup',up);
 });
 
-/* ---------- adding things ---------- */
+/* ---------- adding elements ---------- */
 function add(e){slide().els.push(e);sel=e.id;save();renderAll()}
 function shapeEl(shape){
   const line=shape==='line';
-  return {id:uid(),type:'shape',shape,x:line?330:340,y:line?268:190,w:line?300:280,h:line?4:160,
-    fill:line?'#111827':'#2563eb',text:'',fs:28,color:'#ffffff',font:'Helvetica Neue',bold:false,italic:false,u:false,align:'center'};
+  return {id:uid(),type:'shape',shape,x:line?330:340,y:line?268:190,w:line?300:260,h:line?4:160,
+    fill:line?'#111827':'#2563eb',stroke:'#000000',sw:0,rot:0,op:100,text:'',fs:26,color:'#ffffff',font:'Helvetica Neue',bold:false,italic:false,u:false,s:false,align:'center'};
+}
+function addTable(){
+  add({id:uid(),type:'table',x:180,y:150,w:600,h:220,fill:'#ffffff',color:'#1f2937',font:'Helvetica Neue',fs:20,sw:1,stroke:'#9ca3af',rot:0,op:100,
+    rows:[['Header 1','Header 2','Header 3'],['Row 1, Col 1','Row 1, Col 2','Row 1, Col 3'],['Row 2, Col 1','Row 2, Col 2','Row 2, Col 3']]});
 }
 function addImage(src){
   const im=new Image();
   im.onload=()=>{
-    let w=im.naturalWidth,h=im.naturalHeight;const r=Math.min(1,600/w,400/h);w*=r;h*=r;
-    add({id:uid(),type:'image',x:Math.round((W-w)/2),y:Math.round((H-h)/2),w:Math.round(w),h:Math.round(h),src});
+    let w=im.naturalWidth||400,h=im.naturalHeight||300;const r=Math.min(1,600/w,400/h);w*=r;h*=r;
+    add({id:uid(),type:'image',x:Math.round((W-w)/2),y:Math.round((H-h)/2),w:Math.round(w),h:Math.round(h),src,rot:0,op:100,sw:0,stroke:'#000000'});
   };
   im.src=src;
 }
 function fileToImage(f){const r=new FileReader();r.onload=()=>addImage(r.result);r.readAsDataURL(f)}
-$('#aText').onclick=()=>add(tb(300,220,360,60,'Text',{color:'#1f2937'}));
+$('#aText').onclick=()=>add(tb(300,220,360,60,'Click to edit text',{color:'#1f2937'}));
 $('#aRect').onclick=()=>add(shapeEl('rect'));
 $('#aRound').onclick=()=>add(shapeEl('round'));
 $('#aOval').onclick=()=>add(shapeEl('ellipse'));
+$('#aTri').onclick=()=>add(shapeEl('triangle'));
+$('#aArr').onclick=()=>add(shapeEl('arrow'));
 $('#aLine').onclick=()=>add(shapeEl('line'));
+$('#aTable').onclick=addTable;
 $('#aImg').onclick=()=>$('#imgin').click();
 $('#imgin').onchange=ev=>{[...ev.target.files].forEach(fileToImage);ev.target.value=''};
 $('#stage').addEventListener('dragover',ev=>ev.preventDefault());
 $('#stage').addEventListener('drop',ev=>{
-  const fs=[...(ev.dataTransfer.files||[])].filter(f=>f.type.startsWith('image/'));
-  if(fs.length){ev.preventDefault();fs.forEach(fileToImage)}
+  const fs=[...(ev.dataTransfer.files||[])];
+  const ppt=fs.find(f=>/\.(pptx|ppsx|json)$/i.test(f.name));
+  if(ppt){ev.preventDefault();handleOpenFile(ppt);return}
+  const imgs=fs.filter(f=>f.type.startsWith('image/'));
+  if(imgs.length){ev.preventDefault();imgs.forEach(fileToImage)}
 });
 
 /* ---------- formatting ---------- */
@@ -356,6 +430,7 @@ $('#fs').onchange=()=>save();
 $('#bB').onclick=()=>toggle('bold');
 $('#bI').onclick=()=>toggle('italic');
 $('#bU').onclick=()=>toggle('u');
+$('#bS').onclick=()=>toggle('s');
 $('#aL').onclick=()=>set('align','left');
 $('#aC').onclick=()=>set('align','center');
 $('#aR').onclick=()=>set('align','right');
@@ -364,8 +439,17 @@ $('#tc').onchange=()=>save();
 $('#fc').oninput=ev=>set('fill',ev.target.value,false);
 $('#fc').onchange=()=>save();
 $('#nofill').onclick=()=>set('fill','transparent');
+$('#sc').oninput=ev=>set('stroke',ev.target.value,false);
+$('#sc').onchange=()=>save();
+$('#sw').oninput=ev=>set('sw',Math.max(0,parseInt(ev.target.value,10)||0),false);
+$('#sw').onchange=()=>save();
+$('#rot').oninput=ev=>set('rot',parseInt(ev.target.value,10)||0,false);
+$('#rot').onchange=()=>save();
+$('#op').oninput=ev=>set('op',Math.min(100,Math.max(10,parseInt(ev.target.value,10)||100)),false);
+$('#op').onchange=()=>save();
 $('#bgc').oninput=ev=>{slide().bg=ev.target.value;renderStage();renderThumbs()};
 $('#bgc').onchange=()=>save();
+$('#trans').onchange=ev=>{slide().trans=ev.target.value;save()};
 $('#theme').onchange=ev=>{
   const t=THEMES[ev.target.value];if(!t)return;
   S.slides.forEach(s=>{s.bg=t.bg;s.els.forEach(e=>{if(e.type==='text')e.color=t.fg})});
@@ -403,7 +487,164 @@ $('#notesTa').onchange=()=>save();
 $('#title').oninput=ev=>{S.title=ev.target.value};
 $('#title').onchange=()=>save();
 
-/* ---------- files ---------- */
+/* ---------- PPTX IMPORT & EXPORT ---------- */
+async function importPPTX(file){
+  try{
+    const zip=await JSZip.loadAsync(file);
+    let emuW=9144000,emuH=5143500;
+    const presXml=await zip.file('ppt/presentation.xml')?.async('string');
+    if(presXml){
+      const doc=new DOMParser().parseFromString(presXml,'application/xml');
+      const sz=doc.getElementsByTagName('p:sldSz')[0]||doc.getElementsByTagName('sldSz')[0];
+      if(sz){
+        emuW=parseInt(sz.getAttribute('cx'),10)||emuW;
+        emuH=parseInt(sz.getAttribute('cy'),10)||emuH;
+      }
+    }
+    const slideFiles=Object.keys(zip.files)
+      .filter(k=>/^ppt\/slides\/slide\d+\.xml$/.test(k))
+      .sort((a,b)=>parseInt(a.match(/\d+/)[0],10)-parseInt(b.match(/\d+/)[0],10));
+
+    if(!slideFiles.length)throw new Error('No slides found inside .pptx file.');
+    const newSlides=[];
+
+    for(const sf of slideFiles){
+      const sXml=await zip.file(sf).async('string');
+      const doc=new DOMParser().parseFromString(sXml,'application/xml');
+      const relPath=sf.replace('ppt/slides/','ppt/slides/_rels/')+'.rels';
+      const rels={};
+      if(zip.file(relPath)){
+        const rXml=await zip.file(relPath).async('string');
+        const rDoc=new DOMParser().parseFromString(rXml,'application/xml');
+        Array.from(rDoc.getElementsByTagName('Relationship')).forEach(r=>{
+          rels[r.getAttribute('Id')]=r.getAttribute('Target');
+        });
+      }
+      const els=[];
+      let bg='#ffffff';
+      const bgNode=doc.getElementsByTagName('p:bg')[0];
+      if(bgNode){
+        const clr=bgNode.getElementsByTagName('a:srgbClr')[0];
+        if(clr&&clr.getAttribute('val'))bg='#'+clr.getAttribute('val');
+      }
+
+      const spTree=doc.getElementsByTagName('p:spTree')[0];
+      const children=spTree?Array.from(spTree.children):[];
+
+      for(const node of children){
+        const tag=node.tagName;
+        const xfrm=node.getElementsByTagName('a:xfrm')[0];
+        if(!xfrm)continue;
+        const off=xfrm.getElementsByTagName('a:off')[0];
+        const ext=xfrm.getElementsByTagName('a:ext')[0];
+        if(!off||!ext)continue;
+        const x=Math.round((parseInt(off.getAttribute('x')||0,10)/emuW)*W);
+        const y=Math.round((parseInt(off.getAttribute('y')||0,10)/emuH)*H);
+        const w=Math.max(24,Math.round((parseInt(ext.getAttribute('cx')||0,10)/emuW)*W));
+        const h=Math.max(20,Math.round((parseInt(ext.getAttribute('cy')||0,10)/emuH)*H));
+
+        if(tag==='p:pic'){
+          const blip=node.getElementsByTagName('a:blip')[0];
+          const rId=blip&&(blip.getAttribute('r:embed')||blip.getAttribute('embed'));
+          if(rId&&rels[rId]){
+            const cleanTarget=rels[rId].replace(/^\.\.\//,'ppt/');
+            const imgFile=zip.file(cleanTarget);
+            if(imgFile){
+              const b64=await imgFile.async('base64');
+              const extName=cleanTarget.split('.').pop().toLowerCase();
+              const mime=extName==='png'?'image/png':extName==='svg'?'image/svg+xml':extName==='gif'?'image/gif':'image/jpeg';
+              els.push({id:uid(),type:'image',x,y,w,h,src:`data:${mime};base64,${b64}`,rot:0,op:100,sw:0});
+            }
+          }
+        }else if(tag==='p:sp'){
+          const paras=Array.from(node.getElementsByTagName('a:p'));
+          const lines=paras.map(p=>Array.from(p.getElementsByTagName('a:t')).map(t=>t.textContent).join('')).filter(Boolean);
+          const text=lines.join('\n');
+
+          const spPr=node.getElementsByTagName('p:spPr')[0];
+          let fill='transparent';
+          if(spPr){
+            const solid=spPr.getElementsByTagName('a:solidFill')[0];
+            const srgb=solid&&solid.getElementsByTagName('a:srgbClr')[0];
+            if(srgb&&srgb.getAttribute('val'))fill='#'+srgb.getAttribute('val');
+          }
+
+          let fs=24,color='#1f2937',bold=false,italic=false;
+          const rPr=node.getElementsByTagName('a:rPr')[0];
+          if(rPr){
+            const szAttr=rPr.getAttribute('sz');
+            if(szAttr)fs=Math.round(parseInt(szAttr,10)/100);
+            if(rPr.getAttribute('b')==='1')bold=true;
+            if(rPr.getAttribute('i')==='1')italic=true;
+            const tFill=rPr.getElementsByTagName('a:solidFill')[0];
+            const tClr=tFill&&tFill.getElementsByTagName('a:srgbClr')[0];
+            if(tClr&&tClr.getAttribute('val'))color='#'+tClr.getAttribute('val');
+          }
+
+          const prst=node.getElementsByTagName('a:prstGeom')[0]?.getAttribute('prst');
+          if(fill!=='transparent'||(prst&&prst!=='rect')){
+            const shape=prst==='ellipse'?'ellipse':prst==='roundRect'?'round':prst==='triangle'?'triangle':'rect';
+            els.push({id:uid(),type:'shape',shape,x,y,w,h,fill:fill==='transparent'?'#2563eb':fill,text,fs,color:fill!=='transparent'&&color==='#1f2937'?'#ffffff':color,font:'Helvetica Neue',bold,italic,u:false,s:false,align:'center',rot:0,op:100,sw:0});
+          }else if(text.trim()){
+            els.push(tb(x,y,w,h,text,{fs,color,bold,italic}));
+          }
+        }
+      }
+      newSlides.push({bg,els,notes:'',trans:'none'});
+    }
+    S={title:file.name.replace(/\.(pptx|ppsx)$/i,''),slides:newSlides};
+    cur=0;sel=null;save();renderAll();
+  }catch(err){
+    alert('Could not open .pptx file: '+err.message);
+  }
+}
+
+async function exportPPTX(){
+  finishEdit();
+  try{
+    const pptx=new PptxGenJS();
+    pptx.layout='LAYOUT_16x9';
+    pptx.title=S.title||'Presentation';
+
+    S.slides.forEach(s=>{
+      const slide=pptx.addSlide();
+      if(s.bg&&s.bg.startsWith('#'))slide.background={color:s.bg.slice(1)};
+      s.els.forEach(e=>{
+        const x=(e.x/W)*10,y=(e.y/H)*5.625,w=(e.w/W)*10,h=(e.h/H)*5.625;
+        if(e.type==='image'&&e.src){
+          slide.addImage({data:e.src,x,y,w,h,rotate:e.rot||0});
+        }else if(e.type==='table'&&e.rows){
+          slide.addTable(e.rows,{x,y,w,h,fontSize:Math.round((e.fs||20)*0.75),color:(e.color||'#1f2937').replace('#',''),border:{pt:1,color:'9ca3af'}});
+        }else if(e.type==='shape'){
+          const shMap={rect:pptx.ShapeType.rect,round:pptx.ShapeType.roundRect,ellipse:pptx.ShapeType.ellipse,triangle:pptx.ShapeType.triangle,arrow:pptx.ShapeType.rightArrow,line:pptx.ShapeType.line};
+          slide.addText(e.text||'',{
+            shape:shMap[e.shape]||pptx.ShapeType.rect,
+            x,y,w,h,
+            fill:e.fill&&e.fill!=='transparent'?{color:e.fill.replace('#','')}:undefined,
+            color:(e.color||'#ffffff').replace('#',''),
+            fontSize:Math.round((e.fs||24)*0.75),
+            bold:!!e.bold,italic:!!e.italic,align:e.align||'center',rotate:e.rot||0
+          });
+        }else{
+          slide.addText(e.text||'',{
+            x,y,w,h,
+            color:(e.color||'#1f2937').replace('#',''),
+            fontSize:Math.round((e.fs||24)*0.75),
+            fontFace:e.font||'Helvetica Neue',
+            bold:!!e.bold,italic:!!e.italic,underline:!!e.u,strike:!!e.s,
+            align:e.align||'left',valign:'top',rotate:e.rot||0
+          });
+        }
+      });
+      if(s.notes)slide.addNotes(s.notes);
+    });
+    const safeName=((S.title||'presentation').replace(/[^\w\- ]+/g,'').trim()||'presentation')+'.pptx';
+    await pptx.writeFile({fileName:safeName});
+  }catch(err){
+    alert('Failed to export .pptx: '+err.message);
+  }
+}
+
 function saveFile(){
   finishEdit();
   const b=new Blob([JSON.stringify(S)],{type:'application/json'});
@@ -411,20 +652,24 @@ function saveFile(){
   a.download=((S.title||'presentation').replace(/[^\w\- ]+/g,'').trim()||'presentation')+'.slides.json';
   a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
-$('#saveF').onclick=saveFile;
-$('#open').onclick=()=>$('#filein').click();
-$('#filein').onchange=ev=>{
-  const f=ev.target.files[0];ev.target.value='';if(!f)return;
+function handleOpenFile(f){
+  if(!f)return;
+  if(/\.(pptx|ppsx)$/i.test(f.name)){importPPTX(f);return}
   const r=new FileReader();
   r.onload=()=>{
     try{
       const o=JSON.parse(r.result);
       if(!o||!Array.isArray(o.slides)||!o.slides.length)throw 0;
       S=o;cur=0;sel=null;save();renderAll();
-    }catch(e){alert('That file is not a SlideStudio presentation.')}
+    }catch(e){alert('Unsupported file. Please open a .pptx or .slides.json file.')}
   };
   r.readAsText(f);
-};
+}
+
+$('#savePptx').onclick=exportPPTX;
+$('#saveF').onclick=saveFile;
+$('#open').onclick=()=>$('#filein').click();
+$('#filein').onchange=ev=>{const f=ev.target.files[0];ev.target.value='';handleOpenFile(f)};
 $('#pdf').onclick=()=>{
   finishEdit();
   const a=$('#printArea');a.innerHTML='';
@@ -432,23 +677,23 @@ $('#pdf').onclick=()=>{
   setTimeout(()=>print(),150);
 };
 $('#help').onclick=()=>alert(
- 'Shortcuts\n\n'+
- 'Double-click a box: edit text\n'+
- 'Delete: remove selected\n'+
- 'Arrow keys: nudge (Shift = bigger steps); with nothing selected, change slide\n'+
- '⌘D: duplicate   ⌘C / ⌘V: copy / paste (images paste too)\n'+
- '⌘Z / ⇧⌘Z: undo / redo   ⌘S: save file\n'+
- 'Drag slides in the left list to reorder\n'+
- 'Drop image files onto the slide to add them\n'+
- 'Present: →/Space next, ← back, Esc exit\n\n'+
- 'Export PDF: choose "Save as PDF" in the print dialog.\n'+
- 'Your work auto-saves in this browser; use Save to keep a file.');
+  'SlideStudio Pro Shortcuts & Features\n\n'+
+  '• Open & Save real Microsoft PowerPoint (.pptx) files or native .slides.json\n'+
+  '• Double-click any shape or text box to edit text\n'+
+  '• Click inside tables to edit cells directly\n'+
+  '• Drag & drop .pptx files or images directly onto the canvas\n'+
+  '• ⌘D: Duplicate   ⌘C / ⌘V: Copy / Paste   ⌘Z / ⇧⌘Z: Undo / Redo\n'+
+  '• Present Mode: → / Space (next), ← (previous), Esc (exit)');
 
 /* ---------- present ---------- */
 function drawP(){
   const sc=Math.min(innerWidth/W,innerHeight/H);
   const w=$('#pwrap');w.style.width=W*sc+'px';w.style.height=H*sc+'px';
-  const c=$('#pslide');c.style.transform='scale('+sc+')';
+  const c=$('#pslide');
+  const tr=S.slides[pi].trans||'none';
+  if(tr==='fade'){c.style.opacity='0';setTimeout(()=>c.style.opacity='1',30)}
+  else if(tr==='zoom'){c.style.transform=`scale(${sc*0.85})`;setTimeout(()=>c.style.transform=`scale(${sc})`,30)}
+  else c.style.transform='scale('+sc+')';
   renderSlideInto(c,S.slides[pi],false);
   $('#pcount').textContent=(pi+1)+' / '+S.slides.length;
 }
@@ -484,7 +729,7 @@ addEventListener('keydown',ev=>{
     else if(ev.key==='Escape')endPresent();
     return;
   }
-  if(m&&ev.key.toLowerCase()==='s'){ev.preventDefault();saveFile();return}
+  if(m&&ev.key.toLowerCase()==='s'){ev.preventDefault();exportPPTX();return}
   const a=document.activeElement;
   const typing=a&&(a.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
   if(typing){if(ev.key==='Escape')a.blur();return}
@@ -495,7 +740,7 @@ addEventListener('keydown',ev=>{
   if(m&&key==='x'&&e){ev.preventDefault();clip=JSON.stringify(e);delEl();return}
   if(e){
     if(ev.key==='Delete'||ev.key==='Backspace'){ev.preventDefault();delEl();return}
-    if(ev.key==='Enter'&&e.type!=='image'&&e.shape!=='line'){
+    if(ev.key==='Enter'&&e.type!=='image'&&e.type!=='table'&&e.shape!=='line'){
       ev.preventDefault();
       const n=document.querySelector('#slide [data-id="'+e.id+'"]');
       if(n)n.dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));return;
@@ -518,7 +763,6 @@ addEventListener('paste',ev=>{
   if(clip){ev.preventDefault();pasteClip()}
 });
 
-/* ---------- start ---------- */
 save();renderAll();
 </script>
 </body>
