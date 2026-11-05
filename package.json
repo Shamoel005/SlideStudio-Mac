@@ -1,0 +1,42 @@
+{
+  "name": "slidestudio",
+  "productName": "SlideStudio",
+  "version": "1.0.0",
+  "description": "A free, offline PowerPoint-style slide editor for macOS",
+  "main": "main.js",
+  "author": "SlideStudio",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --mac --publish never"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.slidestudio.app",
+    "productName": "SlideStudio",
+    "files": [
+      "main.js",
+      "app/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "identity": null,
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "title": "SlideStudio"
+    }
+  }
+}
